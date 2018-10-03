@@ -1,5 +1,8 @@
 const say = function (name) {
-    alert ('Hello, ${name}');
+    var div = document.createElement('div');
+    div.innerHTML = '<h1>Hello, ' + name + '!</h1>';
+    div.classList = 'block';
+    document.body.appendChild(div);
 }
 
 export default say;
