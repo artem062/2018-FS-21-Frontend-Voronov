@@ -1,7 +1,6 @@
 const say = function (name) {
     var div = document.createElement('div');
     div.innerHTML = '<h1>Hello, ' + name + '!</h1>';
-    div.classList = 'block';
     document.body.appendChild(div);
 }
 
