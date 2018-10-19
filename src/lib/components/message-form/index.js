@@ -6,7 +6,7 @@ const slotName = 'message-input';
 
 const template = `
     <style>${shadowStyles.toString()}</style>
-    <form>
+    <form class="dropbox">
         <div class="result"></div>
         <label>Тема</label>
         <form-input name="question_topic" placeholder="Введите тему вопроса" slot="${slotName}">
@@ -16,6 +16,12 @@ const template = `
         <form-input name="question_text" placeholder="Введите текст вопроса" slot="${slotName}">
             <span slot="icon"></span>
         </form-input>
+        <label>Геолокация</label>
+        <form-input class="shareGeo" placeholder="Ввести геопозицию" slot="${slotName}">
+            <span slot="icon"></span>
+        </form-input>
+        <img src="" class="image" height="100px">
+        <input type="file" class="fileInput">
         <input type="submit" value="Отправить">
     </form>
 `;
@@ -36,29 +42,64 @@ class MessageForm extends HTMLElement {
     this._elements.message.innerText = `Тема: ${localStorage.getItem('topic')}\nТекст: ${localStorage.getItem('text')}`;
   }
 
-  static get observedAttributes() {
-    return [
-      'action',
-      'method',
-    ];
-  }
-
-  attributeChangedCallback(attrName, oldVal, newVal) {
-    this._elements.form[attrName] = newVal;
-  }
-
   _initElements() {
     const form = this.shadowRoot.querySelector('form');
     const message = this.shadowRoot.querySelector('.result');
+    const geoButton = this.shadowRoot.querySelector('.shareGeo');
+    const fileInput = this.shadowRoot.querySelector('.fileInput');
+    const dropbox = this.shadowRoot.querySelector('.dropbox');
     this._elements = {
       form,
       message,
+      geoButton,
+      fileInput,
+      dropbox,
     };
   }
 
   _addHandlers() {
     this._elements.form.addEventListener('submit', this._onSubmit.bind(this));
     this._elements.form.addEventListener('keypress', this._onKeyPress.bind(this));
+    this._elements.fileInput.addEventListener('change', this._onFileLoad.bind(this));
+    this._elements.geoButton.addEventListener('click', this._onShareGeo.bind(this));
+    this._elements.dropbox.addEventListener('dragenter', MessageForm._onDrag.bind(this));
+    this._elements.dropbox.addEventListener('dragover', MessageForm._onDrag.bind(this));
+    this._elements.dropbox.addEventListener('drop', this._onDrop.bind(this));
+  }
+
+  static _onDrag(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    return false;
+  }
+
+  _onDrop(event) {
+    const image = this.shadowRoot.querySelector('.image');
+    const url = URL.createObjectURL(event.dataTransfer.files[0]);
+    document.imageurl = url;
+    image.onload = () => URL.revokeObjectURL(url);
+    image.src = url;
+    event.stopPropagation();
+    event.preventDefault();
+    return false;
+  }
+
+  _onFileLoad(event) {
+    const image = this.shadowRoot.querySelector('.image');
+    const url = URL.createObjectURL(this.shadowRoot.querySelector('input[type=file]').files[0]);
+    document.imageurl = url;
+    image.onload = () => URL.revokeObjectURL(url);
+    image.src = url;
+    event.preventDefault();
+    return false;
+  }
+
+  _onShareGeo(event) {
+    navigator.geolocation.getCurrentPosition((position) => {
+      this._elements.geoButton.setAttribute('value', `${position.coords.latitude}; ${position.coords.longitude}`);
+    });
+    event.preventDefault();
+    return false;
   }
 
   _onSubmit(event) {
