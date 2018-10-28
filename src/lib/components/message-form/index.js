@@ -129,7 +129,7 @@ class MessageForm extends HTMLElement {
     const myHeaders = new Headers({
       'Access-Control-Allow-Origin': '/',
     });
-    fetch('http://httpbin.org/post', { // онлайн сервер для проверки POST-запросов
+    fetch('http://localhost:8000/questions/add/', {
       method: 'POST',
       body: this._elements.data,
       headers: myHeaders,
