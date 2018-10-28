@@ -6,7 +6,8 @@
     "pretest": "eslint --ignore-path .gitignore .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rm -r dist && mkdir dist",
-    "build": "npm run clean && npm run pretest && webpack"
+    "build": "npm run clean && npm run pretest && webpack",
+    "fast_build": "webpack"
   },
   "repository": {
     "type": "git",
