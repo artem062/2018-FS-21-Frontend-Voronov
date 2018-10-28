@@ -129,12 +129,11 @@ class MessageForm extends HTMLElement {
     const myHeaders = new Headers({
       'Access-Control-Allow-Origin': '/',
     });
-    fetch('http://httpbin.org/post', {  //онлайн сервер для проверки POST-запросов
+    fetch('http://httpbin.org/post', { // онлайн сервер для проверки POST-запросов
       method: 'POST',
       body: this._elements.data,
       headers: myHeaders,
     }).then((response) => {
-      console.log(response);
       if (response.ok) {
         status.innerText = 'Успешно загружено!';
       } else {
