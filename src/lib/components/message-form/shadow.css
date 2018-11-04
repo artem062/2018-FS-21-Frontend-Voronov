@@ -35,7 +35,7 @@ input[type=submit] {
     cursor: pointer;
 }
 
-.fileInput {
+FileInput {
     background-color: #00cc00;
     border: 1px solid #601e1f;
     border-radius: 4px;
