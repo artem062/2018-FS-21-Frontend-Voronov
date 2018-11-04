@@ -1,53 +1,42 @@
-/* eslint no-underscore-dangle: 0 */
-/* eslint-env browser */
-// import styles from './index.css';
-import shadowStyles from './shadow.css';
+import React, { Component } from 'react';
 
-const template = `
-    <style>${shadowStyles.toString()}</style>
-    <input />
-    <slot name="icon"></slot>
-`;
-
-class FormInput extends HTMLElement {
-  constructor() {
-    super();
-    const shadowRoot = this.attachShadow({ mode: 'open' });
-    shadowRoot.innerHTML = template;
-    this._initElements();
-    this._addHandlers();
-  }
-
-  static get observedAttributes() {
-    return [
-      'name',
-      'placeholder',
-      'value',
-      'disabled',
-    ];
-  }
-
-  attributeChangedCallback(attrName, oldVal, newVal) {
-    this.elements.input[attrName] = newVal;
-  }
-
-  _initElements() {
-    const hiddenInput = document.createElement('input');
-    const input = this.shadowRoot.querySelector('input');
-    this.appendChild(hiddenInput);
-    this.elements = {
-      input,
-      hiddenInput,
+export class FormInput extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      label: props.label,
+      placeholder: props.placeholder,
+      name: props.name,
+      value: props.value,
+      saveFun: props.saveFun
     };
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
 
-  _addHandlers() {
-    this.elements.input.addEventListener('input', this._onInput.bind(this));
+  handleChange(event) {
+    this.setState({
+      value: event.target.value
+    }, () => {
+      this.state.saveFun(this.state.value);
+    });
   }
 
-  _onInput() {
-    this.elements.hiddenInput.value = this.elements.input.value;
+  handleClick(event) {}
+
+  render() {
+    return (
+      <div onClick={ this.handleClick }>
+        <label>
+          { this.state.label }
+          <input
+            value={ this.state.value }
+            onChange={ this.handleChange }
+          />
+        </label>
+        <slot name="icon"/>
+      </div>
+    );
   }
 }
-
-customElements.define('form-input', FormInput);
