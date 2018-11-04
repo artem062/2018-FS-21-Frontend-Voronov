@@ -84,6 +84,15 @@ class FileInput extends Component {
 export class MessageForm extends Component {
   constructor(props) {
     super(props);
+    if (!localStorage.getItem('topic')) {
+      localStorage.setItem('topic', '');
+    }
+    if (!localStorage.getItem('text')) {
+      localStorage.setItem('text', '');
+    }
+    if (!localStorage.getItem('geo')) {
+      localStorage.setItem('geo', '');
+    }
     this.state = {
       topic: localStorage.getItem('topic'),
       text: localStorage.getItem('text'),
