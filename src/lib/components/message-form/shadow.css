@@ -1,4 +1,4 @@
-form-input {
+FormInput {
 	width: 100%;
     padding: 12px 20px;
     margin: 8px 0;
@@ -16,6 +16,14 @@ form-input {
     padding: 20px;
 }
 
+.footer {
+    width: 100%;
+    font-size: 120%;
+    border-radius: 5px;
+    background-color: #ffc6e6;
+    padding: 20px;
+}
+
 input[type=submit] {
 	width: 100%;
     background-color: #4CAF50;
@@ -27,7 +35,7 @@ input[type=submit] {
     cursor: pointer;
 }
 
-.fileInput {
+FileInput {
     background-color: #00cc00;
     border: 1px solid #601e1f;
     border-radius: 4px;
