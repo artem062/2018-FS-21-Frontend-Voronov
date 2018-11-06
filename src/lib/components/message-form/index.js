@@ -20,8 +20,15 @@ const template = `
         <form-input class="shareGeo" placeholder="Ввести геопозицию" slot="${slotName}">
             <span slot="icon"></span>
         </form-input>
-        <img src="" class="image" height="100px">
-        <input type="file" class="fileInput">
+        <table class="footer"><tr>
+            <td>
+                <img src="" class="image" height="100px">
+                <input type="file" class="fileInput">
+            </td>
+            <td>
+                <div class="status" align="right"></div>
+            </td>
+        </tr></table>
         <input type="submit" value="Отправить">
     </form>
 `;
@@ -48,12 +55,14 @@ class MessageForm extends HTMLElement {
     const geoButton = this.shadowRoot.querySelector('.shareGeo');
     const fileInput = this.shadowRoot.querySelector('.fileInput');
     const dropbox = this.shadowRoot.querySelector('.dropbox');
+    const data = new FormData();
     this._elements = {
       form,
       message,
       geoButton,
       fileInput,
       dropbox,
+      data,
     };
   }
 
@@ -62,6 +71,7 @@ class MessageForm extends HTMLElement {
     this._elements.form.addEventListener('keypress', this._onKeyPress.bind(this));
     this._elements.fileInput.addEventListener('change', this._onFileLoad.bind(this));
     this._elements.geoButton.addEventListener('click', this._onShareGeo.bind(this));
+    this._elements.geoButton.addEventListener('input', this._onShareGeo.bind(this));
     this._elements.dropbox.addEventListener('dragenter', MessageForm._onDrag.bind(this));
     this._elements.dropbox.addEventListener('dragover', MessageForm._onDrag.bind(this));
     this._elements.dropbox.addEventListener('drop', this._onDrop.bind(this));
@@ -75,6 +85,7 @@ class MessageForm extends HTMLElement {
 
   _onDrop(event) {
     const image = this.shadowRoot.querySelector('.image');
+    this._elements.data.set('file', event.dataTransfer.files[0]);
     const url = URL.createObjectURL(event.dataTransfer.files[0]);
     document.imageurl = url;
     image.onload = () => URL.revokeObjectURL(url);
@@ -86,7 +97,8 @@ class MessageForm extends HTMLElement {
 
   _onFileLoad(event) {
     const image = this.shadowRoot.querySelector('.image');
-    const url = URL.createObjectURL(this.shadowRoot.querySelector('input[type=file]').files[0]);
+    this._elements.data.set('file', this.shadowRoot.querySelector('input[type=file]').files[0]);
+    const url = URL.createObjectURL(this._elements.data.get('file'));
     document.imageurl = url;
     image.onload = () => URL.revokeObjectURL(url);
     image.src = url;
@@ -96,6 +108,7 @@ class MessageForm extends HTMLElement {
 
   _onShareGeo(event) {
     navigator.geolocation.getCurrentPosition((position) => {
+      this._elements.data.set('geolocation', `${position.coords.latitude}; ${position.coords.longitude}`);
       this._elements.geoButton.setAttribute('value', `${position.coords.latitude}; ${position.coords.longitude}`);
     });
     event.preventDefault();
@@ -103,12 +116,30 @@ class MessageForm extends HTMLElement {
   }
 
   _onSubmit(event) {
+    const status = this.shadowRoot.querySelector('.status');
     const result = Array.from(this._elements.form.elements).map(
       el => el.value,
     );
+    this._elements.data.set('topic', result[0]);
+    this._elements.data.set('text', result[1]);
     this._elements.message.innerText = `Тема: ${result[0]}\nТекст: ${result[1]}`;
     localStorage.setItem('topic', result[0]);
     localStorage.setItem('text', result[1]);
+    status.innerText = 'Загрузка...';
+    const myHeaders = new Headers({
+      'Access-Control-Allow-Origin': '/',
+    });
+    fetch('http://localhost:8000/questions/add/', {
+      method: 'POST',
+      body: this._elements.data,
+      headers: myHeaders,
+    }).then((response) => {
+      if (response.ok) {
+        status.innerText = 'Успешно загружено!';
+      } else {
+        status.innerText = 'Ошибка при загрузке';
+      }
+    });
     event.preventDefault();
     return false;
   }
