@@ -1,219 +1,154 @@
-import React, { Component } from 'react';
-import { FormInput } from '../form/-input';
+/* eslint no-underscore-dangle: 0 */
+/* eslint-env browser */
+import shadowStyles from './shadow.css';
 
-class ShareGeo extends FormInput {
-  constructor(props) {
-    super(props);
+const slotName = 'message-input';
 
-    this.takeGeo = this.takeGeo.bind(this);
-  }
+const template = `
+    <style>${shadowStyles.toString()}</style>
+    <form class="dropbox">
+        <div class="result"></div>
+        <label>Тема</label>
+        <form-input name="question_topic" placeholder="Введите тему вопроса" slot="${slotName}">
+            <span slot="icon"></span>
+        </form-input>
+        <label>Текст</label>
+        <form-input name="question_text" placeholder="Введите текст вопроса" slot="${slotName}">
+            <span slot="icon"></span>
+        </form-input>
+        <label>Геолокация</label>
+        <form-input class="shareGeo" placeholder="Ввести геопозицию" slot="${slotName}">
+            <span slot="icon"></span>
+        </form-input>
+        <table class="footer"><tr>
+            <td>
+                <img src="" class="image" height="100px">
+                <input type="file" class="fileInput">
+            </td>
+            <td>
+                <div class="status" align="right"></div>
+            </td>
+        </tr></table>
+        <input type="submit" value="Отправить">
+    </form>
+`;
 
-  takeGeo() {
-    navigator.geolocation.getCurrentPosition((position) => {
-      this.setState({
-        value: `${position.coords.latitude}, ${position.coords.longitude}`
-      }, () => {
-        this.state.saveFun(this.state.value);
-      });
-    });
-    event.preventDefault();
-  }
-
-  handleClick(event) {
-    this.takeGeo();
-  }
-
-  handleChange(event) {
-    this.takeGeo();
-  }
-}
-
-class FileInput extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      imageUrl: '',
-      saveFun: props.saveFun
-    };
-
-    this.handleChange = this.handleChange.bind(this);
-    FileInput.handleDrag = FileInput.handleDrag.bind(this);
-    this.handleDrop = this.handleDrop.bind(this);
-  }
-
-  handleChange (files) {
-    this.state.saveFun(files[0]);
-    const url = URL.createObjectURL(files[0]);
-    this.setState({
-      imageUrl: url
-    });
-    event.preventDefault();
-  }
-
-  static handleDrag (event) {
-    event.stopPropagation();
-    event.preventDefault();
-  }
-
-  handleDrop (event) {
-    this.handleChange(event.dataTransfer.files);
-    event.preventDefault();
-  }
-
-  render() {
-    return (
-      <div
-        onDrag={ FileInput.handleDrag }
-        onDrop={ this.handleDrop }
-      >
-        <img
-          src={ this.state.imageUrl }
-          className="image"
-          height="100px"
-        />
-          <input
-            type="file"
-            onChange={ (event) => this.handleChange(event.target.files) }
-            onLoad={ () => URL.revokeObjectURL(this.state.imageIrl) }
-          />
-      </div>
-    )
-  }
-}
-
-export class MessageForm extends Component {
-  constructor(props) {
-    super(props);
+class MessageForm extends HTMLElement {
+  constructor() {
+    super();
+    const shadowRoot = this.attachShadow({ mode: 'open' });
+    shadowRoot.innerHTML = template;
+    this._initElements();
+    this._addHandlers();
     if (!localStorage.getItem('topic')) {
       localStorage.setItem('topic', '');
     }
     if (!localStorage.getItem('text')) {
       localStorage.setItem('text', '');
     }
-    if (!localStorage.getItem('geo')) {
-      localStorage.setItem('geo', '');
-    }
-    this.state = {
-      topic: localStorage.getItem('topic'),
-      text: localStorage.getItem('text'),
-      geo: localStorage.getItem('geo'),
-      status: '',
-    };
-
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.updateTopic = this.updateTopic.bind(this);
-    this.updateText = this.updateText.bind(this);
-    this.updateGeo = this.updateGeo.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.updateFile = this.updateFile.bind(this);
+    this._elements.message.innerText = `Тема: ${localStorage.getItem('topic')}\nТекст: ${localStorage.getItem('text')}`;
   }
 
-  updateTopic (value) {
-    this.setState({
-      topic: value
-    })
-  }
-
-  updateText (value) {
-    this.setState({
-      text: value
-    })
-  }
-
-  updateGeo (value) {
-    this.setState({
-      geo: value
-    })
-  }
-
-  updateFile (value) {
-    this.setState({
-      file: value
-    })
-  }
-
-  handleSubmit (event) {
-    localStorage.setItem('topic', this.state.topic);
-    localStorage.setItem('text', this.state.text);
-    localStorage.setItem('geo', this.state.geo);
-    this.setState({ status: 'Загрузка...' });
+  _initElements() {
+    const form = this.shadowRoot.querySelector('form');
+    const message = this.shadowRoot.querySelector('.result');
+    const geoButton = this.shadowRoot.querySelector('.shareGeo');
+    const fileInput = this.shadowRoot.querySelector('.fileInput');
+    const dropbox = this.shadowRoot.querySelector('.dropbox');
     const data = new FormData();
-    data.append('topic', this.state.topic);
-    data.append('text', this.state.text);
-    data.append('geo', this.state.geo);
-    data.append('file', this.state.file);
+    this._elements = {
+      form,
+      message,
+      geoButton,
+      fileInput,
+      dropbox,
+      data,
+    };
+  }
+
+  _addHandlers() {
+    this._elements.form.addEventListener('submit', this._onSubmit.bind(this));
+    this._elements.form.addEventListener('keypress', this._onKeyPress.bind(this));
+    this._elements.fileInput.addEventListener('change', this._onFileLoad.bind(this));
+    this._elements.geoButton.addEventListener('click', this._onShareGeo.bind(this));
+    this._elements.geoButton.addEventListener('input', this._onShareGeo.bind(this));
+    this._elements.dropbox.addEventListener('dragenter', MessageForm._onDrag.bind(this));
+    this._elements.dropbox.addEventListener('dragover', MessageForm._onDrag.bind(this));
+    this._elements.dropbox.addEventListener('drop', this._onDrop.bind(this));
+  }
+
+  static _onDrag(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    return false;
+  }
+
+  _onDrop(event) {
+    const image = this.shadowRoot.querySelector('.image');
+    this._elements.data.set('file', event.dataTransfer.files[0]);
+    const url = URL.createObjectURL(event.dataTransfer.files[0]);
+    document.imageurl = url;
+    image.onload = () => URL.revokeObjectURL(url);
+    image.src = url;
+    event.stopPropagation();
+    event.preventDefault();
+    return false;
+  }
+
+  _onFileLoad(event) {
+    const image = this.shadowRoot.querySelector('.image');
+    this._elements.data.set('file', this.shadowRoot.querySelector('input[type=file]').files[0]);
+    const url = URL.createObjectURL(this._elements.data.get('file'));
+    document.imageurl = url;
+    image.onload = () => URL.revokeObjectURL(url);
+    image.src = url;
+    event.preventDefault();
+    return false;
+  }
+
+  _onShareGeo(event) {
+    navigator.geolocation.getCurrentPosition((position) => {
+      this._elements.data.set('geolocation', `${position.coords.latitude}; ${position.coords.longitude}`);
+      this._elements.geoButton.setAttribute('value', `${position.coords.latitude}; ${position.coords.longitude}`);
+    });
+    event.preventDefault();
+    return false;
+  }
+
+  _onSubmit(event) {
+    const status = this.shadowRoot.querySelector('.status');
+    const result = Array.from(this._elements.form.elements).map(
+      el => el.value,
+    );
+    this._elements.data.set('topic', result[0]);
+    this._elements.data.set('text', result[1]);
+    this._elements.message.innerText = `Тема: ${result[0]}\nТекст: ${result[1]}`;
+    localStorage.setItem('topic', result[0]);
+    localStorage.setItem('text', result[1]);
+    status.innerText = 'Загрузка...';
     const myHeaders = new Headers({
       'Access-Control-Allow-Origin': '/',
     });
-    fetch('http://localhost:8000/question/add', {
+    fetch('http://localhost:8000/questions/add/', {
       method: 'POST',
-      body: data,
+      body: this._elements.data,
       headers: myHeaders,
     }).then((response) => {
       if (response.ok) {
-        this.setState({ status: 'Успешно загружено!'});
+        status.innerText = 'Успешно загружено!';
       } else {
-        this.setState({ status: 'Ошибка при загрузке'});
+        status.innerText = 'Ошибка при загрузке';
       }
     });
     event.preventDefault();
+    return false;
   }
 
-  handleKeyPress(event) {
+  _onKeyPress(event) {
     if (event.keyCode === 13) {
-      this.dispatchEvent(new Event('submit'));
+      this._elements.form.dispatchEvent(new Event('submit'));
     }
   }
-
-
-
-  render() {
-    return (
-      <form
-        onSubmit={ this.handleSubmit }
-        onKeyPress={ this.handleKeyPress }
-      >
-        <div className="result">
-          Тема: { this.state.topic } <br/>
-          Текст: { this.state.text } <br/>
-          Геопозиция: { this.state.geo }
-        </div>
-
-        <FormInput
-          label="Тема"
-          placeholder="Введите тему вопроса"
-          name="question-topic"
-          value={ this.state.topic }
-          saveFun={ this.updateTopic }
-        />
-
-        <FormInput
-          label="Текст"
-          placeholder="Введите текст вопроса"
-          name="question-text"
-          value={ this.state.text }
-          saveFun={ this.updateText }
-        />
-
-        <ShareGeo
-          label="Геопозиция"
-          placeholder="Введите геопозицию"
-          value={ this.state.geo }
-          saveFun={ this.updateGeo }
-        />
-
-        <table className="footer">
-          <tbody>
-            <tr>
-              <td><FileInput saveFun={ this.updateFile } /></td>
-              <td><div className="status" align="right">{ this.state.status }</div></td>
-            </tr>
-          </tbody>
-
-        </table>
-
-        <input type="submit" value="Отправить"/>
-      </form>
-    )
-  }
 }
+
+customElements.define('message-form', MessageForm);

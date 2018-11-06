@@ -36,9 +36,6 @@ module.exports = {
       },
     ],
   },
-  resolve: {
-    extensions: ['*', '.js', '.jsx'],
-  },
   plugins: [
     new ExtractTextPlugin({
       filename: '[name]/style.css',
@@ -48,7 +45,4 @@ module.exports = {
       template: './src/app/create/index.html',
     }),
   ],
-  devServer: {
-    contentBase: './dist/create',
-  },
 };
