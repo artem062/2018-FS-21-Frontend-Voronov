@@ -165,8 +165,6 @@ export class MessageForm extends Component {
     }
   }
 
-
-
   render() {
     return (
       <form
