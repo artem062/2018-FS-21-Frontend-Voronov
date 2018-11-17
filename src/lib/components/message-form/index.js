@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { FormInput } from '../form/-input';
+import './shadow.css'
 
 class ShareGeo extends FormInput {
   constructor(props) {
@@ -16,7 +17,6 @@ class ShareGeo extends FormInput {
         this.state.saveFun(this.state.value);
       });
     });
-    event.preventDefault();
   }
 
   handleClick(event) {
@@ -47,7 +47,6 @@ class FileInput extends Component {
     this.setState({
       imageUrl: url
     });
-    event.preventDefault();
   }
 
   static handleDrag (event) {
@@ -68,6 +67,7 @@ class FileInput extends Component {
       >
         <img
           src={ this.state.imageUrl }
+          alt=''
           className="image"
           height="100px"
         />
