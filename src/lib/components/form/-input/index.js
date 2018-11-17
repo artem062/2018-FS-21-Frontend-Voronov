@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './shadow.css'
 
 export class FormInput extends Component {
   constructor(props) {
@@ -31,8 +32,9 @@ export class FormInput extends Component {
         <label>
           { this.state.label }
           <input
-            value={ this.state.value }
-            onChange={ this.handleChange }
+              className='myInput'
+              value={ this.state.value }
+              onChange={ this.handleChange }
           />
         </label>
         <slot name="icon"/>
