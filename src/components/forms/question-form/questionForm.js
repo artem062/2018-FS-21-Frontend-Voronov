@@ -1,102 +1,30 @@
 import React, { Component } from 'react';
-import { FormInput } from '../form/-input';
-import './shadow.css'
+import FormInput from '../components/formInput';
+import FileInput from '../components/fileInput';
+import ShareGeo from '../components/shareGeo';
+import './index.css'
 
-class ShareGeo extends FormInput {
+class QuestionForm extends Component {
   constructor(props) {
     super(props);
-
-    this.takeGeo = this.takeGeo.bind(this);
-  }
-
-  takeGeo() {
-    navigator.geolocation.getCurrentPosition((position) => {
-      this.setState({
-        value: `${position.coords.latitude}, ${position.coords.longitude}`
-      }, () => {
-        this.state.saveFun(this.state.value);
-      });
-    });
-  }
-
-  handleClick(event) {
-    this.takeGeo();
-  }
-
-  handleChange(event) {
-    this.takeGeo();
-  }
-}
-
-class FileInput extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      imageUrl: '',
-      saveFun: props.saveFun
-    };
-
-    this.handleChange = this.handleChange.bind(this);
-    FileInput.handleDrag = FileInput.handleDrag.bind(this);
-    this.handleDrop = this.handleDrop.bind(this);
-  }
-
-  handleChange (files) {
-    this.state.saveFun(files[0]);
-    const url = URL.createObjectURL(files[0]);
-    this.setState({
-      imageUrl: url
-    });
-  }
-
-  static handleDrag (event) {
-    event.stopPropagation();
-    event.preventDefault();
-  }
-
-  handleDrop (event) {
-    this.handleChange(event.dataTransfer.files);
-    event.preventDefault();
-  }
-
-  render() {
-    return (
-      <div
-        onDrag={ FileInput.handleDrag }
-        onDrop={ this.handleDrop }
-      >
-        <img
-          src={ this.state.imageUrl }
-          alt=''
-          className="image"
-          height="100px"
-        />
-          <input
-            type="file"
-            onChange={ (event) => this.handleChange(event.target.files) }
-            onLoad={ () => URL.revokeObjectURL(this.state.imageIrl) }
-          />
-      </div>
-    )
-  }
-}
-
-export class MessageForm extends Component {
-  constructor(props) {
-    super(props);
-    if (!localStorage.getItem('topic')) {
-      localStorage.setItem('topic', '');
+    let i = 1;
+    while (localStorage.getItem(`question_topic${i}`)) {
+      ++i;
     }
-    if (!localStorage.getItem('text')) {
-      localStorage.setItem('text', '');
+    if (!localStorage.getItem(`question_topic${i}`)) {
+      localStorage.setItem(`question_topic${i}`, '');
     }
-    if (!localStorage.getItem('geo')) {
-      localStorage.setItem('geo', '');
+    if (!localStorage.getItem(`question_text${i}`)) {
+      localStorage.setItem(`question_text${i}`, '');
+    }
+    if (!localStorage.getItem(`geo${i}`)) {
+      localStorage.setItem(`geo${i}`, '');
     }
     this.state = {
-      topic: localStorage.getItem('topic'),
-      text: localStorage.getItem('text'),
-      geo: localStorage.getItem('geo'),
+      topic: localStorage.getItem(`question_topic${i}`),
+      text: localStorage.getItem(`question_text${i}`),
+      geo: localStorage.getItem(`geo${i}`),
+        i:i,
       status: '',
     };
 
@@ -133,10 +61,16 @@ export class MessageForm extends Component {
   }
 
   handleSubmit (event) {
-    localStorage.setItem('topic', this.state.topic);
-    localStorage.setItem('text', this.state.text);
-    localStorage.setItem('geo', this.state.geo);
-    this.setState({ status: 'Загрузка...' });
+    const i = this.state.i;
+    localStorage.setItem(`question_topic${i}`, this.state.topic);
+    localStorage.setItem(`question_text${i}`, this.state.text);
+    localStorage.setItem(`geo${i}`, this.state.geo);
+
+    this.setState({
+        status: 'Загрузка...',
+        i: i + 1
+    });
+
     const data = new FormData();
     data.append('topic', this.state.topic);
     data.append('text', this.state.text);
@@ -173,6 +107,7 @@ export class MessageForm extends Component {
         onSubmit={ this.handleSubmit }
         onKeyPress={ this.handleKeyPress }
       >
+        <h2 align="center">Задать вопрос</h2>
         <div className="result">
           Тема: { this.state.topic } <br/>
           Текст: { this.state.text } <br/>
@@ -217,3 +152,5 @@ export class MessageForm extends Component {
     )
   }
 }
+
+export default QuestionForm;

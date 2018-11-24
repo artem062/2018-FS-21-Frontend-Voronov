@@ -1,0 +1,15 @@
+.result {
+	color: red;
+	font-size: 120%;
+	border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 20px;
+}
+
+.footer {
+    width: 100%;
+    font-size: 120%;
+    border-radius: 5px;
+    background-color: #cfffb6;
+    padding: 20px;
+}
