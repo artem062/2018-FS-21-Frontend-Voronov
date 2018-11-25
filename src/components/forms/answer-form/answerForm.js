@@ -6,14 +6,18 @@ import './index.css'
 class AnswerForm extends Component {
     constructor(props) {
         super(props);
-        if (!localStorage.getItem('question_topic')) {
-            localStorage.setItem('question_topic', '');
+        if (!localStorage.getItem('currentQuestion_topic')) {
+            localStorage.setItem('currentQuestion_topic', 'Выберите вопрос в списке вопросов');
+        }
+        if (!localStorage.getItem('currentQuestion_text')) {
+            localStorage.setItem('currentQuestion_text', '');
         }
         if (!localStorage.getItem('answer_text')) {
             localStorage.setItem('answer_text', '');
         }
         this.state = {
-            question_topic: localStorage.getItem('question_topic'),
+            question_topic: localStorage.getItem('currentQuestion_topic'),
+            question_text: localStorage.getItem('currentQuestion_text'),
             text: localStorage.getItem('answer_text'),
             status: '',
         };
@@ -76,6 +80,7 @@ class AnswerForm extends Component {
                 <h2 align="center">Ответить на вопрос</h2>
                 <div className="result">
                     Вопрос: { this.state.question_topic } <br/>
+                    Текст: { this.state.question_text } <br/>
                     Ответ: { this.state.text } <br/>
                 </div>
 
