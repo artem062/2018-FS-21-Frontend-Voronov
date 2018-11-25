@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import './index.css'
 import { Redirect } from 'react-router';
+import { connect } from "react-redux";
+import * as actionCreators from "../../../store/actions/questionCollector";
 
 class QuestionList extends Component {
     constructor(props) {
@@ -10,6 +12,7 @@ class QuestionList extends Component {
         this.state = {
             redirect: false,
         };
+        this.props.onEnter();
     }
 
     changeCurrentQuestion(question) {
@@ -25,17 +28,18 @@ class QuestionList extends Component {
             return <Redirect push to="/answer/add" />;
         }
 
-        let questions = [];
         let i = 1;
-        while (localStorage.getItem(`question_topic${i}`)) {
-            questions.push([
-                localStorage.getItem(`question_topic${i}`),
-                localStorage.getItem(`question_text${i}`),
-            ]);
-            ++i;
-        }
 
-        i = 0;
+        // let questions = [];
+        // while (localStorage.getItem(`question_topic${i}`)) {
+        //     questions.push([
+        //         localStorage.getItem(`question_topic${i}`),
+        //         localStorage.getItem(`question_text${i}`),
+        //     ]);
+        //     ++i;
+        // }
+        const questions = this.props.questions;
+
         const output = questions.map((question) =>
             <div
                 className='question'
@@ -55,4 +59,16 @@ class QuestionList extends Component {
     }
 }
 
-export default QuestionList;
+const mapStateToProps = state => {
+    return {
+        questions: state.quest.questions,
+    }
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        onEnter: () => dispatch(actionCreators.check_questions()),
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(QuestionList);

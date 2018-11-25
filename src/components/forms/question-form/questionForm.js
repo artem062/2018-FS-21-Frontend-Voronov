@@ -1,9 +1,10 @@
-
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import FormInput from '../components/formInput';
 import FileInput from '../components/fileInput';
 import ShareGeo from '../components/shareGeo';
 import './index.css'
+import * as actionCreators from '../../../store/actions/questionCollector';
 
 class QuestionForm extends Component {
     constructor(props) {
@@ -62,10 +63,20 @@ class QuestionForm extends Component {
     }
 
     handleSubmit (event) {
+        if (this.state.topic.length === 0 && this.state.text.length === 0) {
+            this.setState({
+                status: 'Введите тему или текст',
+            });
+            event.preventDefault();
+            return
+        }
+
         const i = this.state.i;
         localStorage.setItem(`question_topic${i}`, this.state.topic);
         localStorage.setItem(`question_text${i}`, this.state.text);
         localStorage.setItem(`geo${i}`, this.state.geo);
+
+        this.props.onAdd(this.state.topic, this.state.text);
 
         this.setState({
             status: 'Загрузка...',
@@ -152,4 +163,10 @@ class QuestionForm extends Component {
     }
 }
 
-export default QuestionForm;
+const mapDispatchToProps = dispatch => {
+    return {
+        onAdd: (topic, text) => dispatch(actionCreators.add_question(topic, text)),
+    }
+};
+
+export default connect(null, mapDispatchToProps)(QuestionForm);
