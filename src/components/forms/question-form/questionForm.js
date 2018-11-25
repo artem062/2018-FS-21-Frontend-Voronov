@@ -99,8 +99,6 @@ class QuestionForm extends Component {
     }
   }
 
-
-
   render() {
     return (
       <form
