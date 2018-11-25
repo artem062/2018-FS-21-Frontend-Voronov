@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import {Redirect} from "react-router";
 import FormInput from '../components/formInput';
 import FileInput from '../components/fileInput';
 import ShareGeo from '../components/shareGeo';
@@ -112,6 +113,10 @@ class QuestionForm extends Component {
     }
 
     render() {
+        if (!this.props.isLogin) {
+            return <Redirect push to="/" />;
+        }
+
         return (
             <form
                 onSubmit={ this.handleSubmit }
@@ -163,10 +168,16 @@ class QuestionForm extends Component {
     }
 }
 
+const mapStateToProps = state => {
+    return {
+        isLogin: state.auth.token !== null,
+    }
+};
+
 const mapDispatchToProps = dispatch => {
     return {
         onAdd: (topic, text) => dispatch(actionCreators.add_question(topic, text)),
     }
 };
 
-export default connect(null, mapDispatchToProps)(QuestionForm);
+export default connect(mapStateToProps, mapDispatchToProps)(QuestionForm);

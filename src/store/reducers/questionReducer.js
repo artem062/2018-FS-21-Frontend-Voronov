@@ -22,6 +22,23 @@ const reducer = ( state = initialState, action ) => {
             questions: state.questions
         }
     }
+
+    if (action.type === actionTypes.GET_QUESTIONS) {
+        //let readyData = JSON.parse(action.data);
+        let readyData = {
+            questions: [
+                {
+                    name: "ltl",
+                    text: "kek"
+                }
+            ]
+        };
+        const questions = readyData.questions.map((obj) => [obj.name, obj.text]);
+        return {
+            new_questions: 0,
+            questions
+        }
+    }
     return state;
 };
 
