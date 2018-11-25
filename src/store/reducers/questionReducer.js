@@ -25,7 +25,7 @@ const reducer = ( state = initialState, action ) => {
 
     if (action.type === actionTypes.GET_QUESTIONS) {
         const readyData = JSON.parse(action.data);
-        const questions = readyData.questions.map((obj) => [obj.name, obj.text]);
+        const questions = readyData.questions.map((obj) => [obj.fields.name, obj.fields.text]);
         return {
             new_questions: 0,
             questions
