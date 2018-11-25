@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import './shadow.css'
+import './index.css'
 
-export class FormInput extends Component {
+class FormInput extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -35,6 +35,7 @@ export class FormInput extends Component {
               className='myInput'
               value={ this.state.value }
               onChange={ this.handleChange }
+              placeholder={ this.state.placeholder }
           />
         </label>
         <slot name="icon"/>
@@ -42,3 +43,5 @@ export class FormInput extends Component {
     );
   }
 }
+
+export default FormInput;
