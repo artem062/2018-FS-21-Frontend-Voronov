@@ -19,9 +19,11 @@ class FormInput extends Component {
   handleChange(event) {
     this.setState({
       value: event.target.value
-    }, () => {
-      this.state.saveFun(this.state.value);
     });
+
+    if (this.state.saveFun) {
+      this.state.saveFun(event.target.value);
+    }
   }
 
   handleClick(event) {}

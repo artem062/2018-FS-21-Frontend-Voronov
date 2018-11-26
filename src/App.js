@@ -1,17 +1,13 @@
 /* eslint-disable no-unused-vars */
 import React, { Component } from 'react';
+import { BrowserRouter as Router, Route} from 'react-router-dom';
 import './App.css';
+
+import Layout from './components/Layout/Layout'
+import QuestionList from "./components/lists/question_list/questionList";
+import MainPage from './components/mainPage/MainPage'
 import QuestionForm from './components/forms/question-form/questionForm';
 import AnswerForm from './components/forms/answer-form/answerForm'
-import Layout from './components/Layout/Layout'
-import { BrowserRouter as Router, Route} from 'react-router-dom';
-import QuestionList from "./components/lists/question_list/questionList";
-
-const MainPage = () => (
-    <div>
-        <h2 align="center">Главная страница</h2>
-    </div>
-);
 
 class App extends Component {
     render() {
