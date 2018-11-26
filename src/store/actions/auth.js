@@ -1,21 +1,6 @@
 import * as actionTypes from './actionTypes';
 import axios from 'axios';
-import { connect } from 'react-redux'
 import * as actionCreators from './questionCollector';
-
-axios.interceptors.response.use((response) => {
-    return response;
-}, (error) => {
-    return Promise.resolve({
-        data: {
-            token: 'sdfsdfsef34234wefsdf234',
-        },
-        status: 200,
-        statusText: 'Ok',
-        header: {},
-        config: error.config
-    })
-});
 
 export const authStart = () => {
     return {
@@ -39,30 +24,20 @@ export const authFailed = (err) => {
 
 
 export const auth = (login, password) => {
-    document.myVar = axios;
     return dispatch => {
         dispatch(authStart());
-        axios.post('/login', {login, password})
+        axios.post('https://voronov.chickenkiller.com/js_login/', { login, password }) //postman
             .then(response => {
                 console.log(response);
                 localStorage.setItem('token', response.data.token);
                 dispatch(authSuccess(response.data.token));
-                axios.post('/question/get').then( resp => {
+                axios.get('https://voronov.chickenkiller.com/question/get/').then( resp => {
+                    console.log(resp);
                     dispatch(actionCreators.get_questions(resp))
                 })
             })
             .catch(error => {
                 dispatch(authFailed(error));
             });
-    }
-};
-
-
-export const authCheckState = () => {
-    return dispatch => {
-        const token = localStorage.getItem('token');
-        if(token) {
-            dispatch(authSuccess(token));
-        }
     }
 };

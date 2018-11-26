@@ -89,8 +89,11 @@ class Auth extends Component {
         inputData.value = event.target.value;
         inputData.valid = this.checkValidity(inputData.value, inputData.validation);
 
-        const invalid = Object.keys(newFormData).some(key => {
-            return !newFormData[key].valid;
+        const invalid = Object.keys(newFormData).some(inputs => {
+            if (key === inputs) {
+                return !inputData.valid
+            }
+            return !newFormData[inputs].valid;
         });
 
         newFormData[key] = inputData;
@@ -123,8 +126,12 @@ class Auth extends Component {
             });
 
         let error;
-        if(this.props.error) {
-            error = <h4 className="error">Проблема со входом: {this.props.error.message}</h4>;
+        if(this.props.error && !this.state.hint) {
+            if (this.props.error.response && this.props.error.response.data) {
+                error = <h4 className="error">Проблема со входом: { this.props.error.response.data }</h4>;
+            } else {
+                error = <h4 className="error">Проблема со входом: { this.props.error.message }</h4>;
+            }
         }
 
         let hint;
