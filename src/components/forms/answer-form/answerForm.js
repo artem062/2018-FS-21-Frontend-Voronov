@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { Redirect } from "react-router";
 import FormInput from '../components/formInput';
 import FileInput from '../components/fileInput';
 import './index.css'
@@ -72,6 +74,10 @@ class AnswerForm extends Component {
     }
 
     render() {
+        if (!this.props.isLogin) {
+            return <Redirect push to="/" />;
+        }
+
         return (
             <form
                 onSubmit={ this.handleSubmit }
@@ -108,4 +114,10 @@ class AnswerForm extends Component {
     }
 }
 
-export default AnswerForm;
+const mapStateToProps = state => {
+    return {
+        isLogin: state.auth.token !== null,
+    }
+};
+
+export default connect(mapStateToProps)(AnswerForm);

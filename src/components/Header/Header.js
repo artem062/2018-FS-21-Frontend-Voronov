@@ -10,7 +10,7 @@ class Header extends Component {
             if(this.props.questions !== 0) {
                 unread = ` (${this.props.questions})`
             }
-            hiddenLinks = <div>
+            hiddenLinks = <ul>
                 <li>
                     <Link to='/question'>Список вопросов{ unread }</Link>
                 </li>
@@ -20,23 +20,22 @@ class Header extends Component {
                 <li>
                     <Link to='/answer/add'>Ответить</Link>
                 </li>
-            </div>
+            </ul>
+        } else {
+            hiddenLinks = <ul>
+                <li>
+                    <Link to='/'>Вход</Link>
+                </li>
+            </ul>
         }
 
-        return (
-            <ul>
-                <li>
-                    <Link to='/'>Главная</Link>
-                </li>
-                { hiddenLinks }
-            </ul>
-        )
+        return hiddenLinks;
     }
 }
 
 const mapStateToProps = state => {
     return {
-        isLogin: state.auth.isAuthorized,
+        isLogin: state.auth.token !== null,
         questions: state.quest.new_questions,
     }
 };

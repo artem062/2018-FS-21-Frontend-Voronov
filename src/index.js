@@ -6,11 +6,11 @@ import * as serviceWorker from './serviceWorker';
 import { Provider } from 'react-redux';
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
-import userReducer from './store/reducers/userdataReducer';
+import authReducer from './store/reducers/authReducer';
 import questionsReducer from './store/reducers/questionReducer'
 
 const rootReducer = combineReducers({
-    auth: userReducer,
+    auth: authReducer,
     quest: questionsReducer,
 });
 

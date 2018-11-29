@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './index.css'
 import { Redirect } from 'react-router';
 import { connect } from "react-redux";
-import * as actionCreators from "../../../store/actions/questionCollector";
+import * as actionCreators from "../../store/actions/questionCollector";
 
 class QuestionList extends Component {
     constructor(props) {
@@ -24,6 +24,9 @@ class QuestionList extends Component {
     }
 
     render() {
+        if (!this.props.isLogin) {
+            return <Redirect push to="/" />;
+        }
         if (this.state.redirect) {
             return <Redirect push to="/answer/add" />;
         }
@@ -62,6 +65,7 @@ class QuestionList extends Component {
 const mapStateToProps = state => {
     return {
         questions: state.quest.questions,
+        isLogin: state.auth.token !== null,
     }
 };
 

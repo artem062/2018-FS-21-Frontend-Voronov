@@ -13,3 +13,10 @@ export const check_questions = () => {
         type: actionTypes.CHECK_QUESTIONS,
     };
 };
+
+export const get_questions = (data) => {
+    return {
+        type: actionTypes.GET_QUESTIONS,
+        data
+    };
+};
