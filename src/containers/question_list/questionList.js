@@ -16,8 +16,7 @@ class QuestionList extends Component {
     }
 
     changeCurrentQuestion(question) {
-        localStorage.setItem('currentQuestion_topic', question[0]);
-        localStorage.setItem('currentQuestion_text', question[1]);
+        this.props.onChangeCurrentQuestion(question);
         this.setState({
             redirect: true
         });
@@ -32,25 +31,17 @@ class QuestionList extends Component {
         }
 
         let i = 1;
-
-        // let questions = [];
-        // while (localStorage.getItem(`question_topic${i}`)) {
-        //     questions.push([
-        //         localStorage.getItem(`question_topic${i}`),
-        //         localStorage.getItem(`question_text${i}`),
-        //     ]);
-        //     ++i;
-        // }
         const questions = this.props.questions;
 
-        const output = questions.map((question) =>
+        const output = questions.map((question, index) =>
             <div
                 className='question'
                 key={i++}
-                onClick={() => this.changeCurrentQuestion(question)}
+                onClick={() => this.changeCurrentQuestion(index)}
             >
-                Тема: {question[0]}<br/>
-                Вопрос: {question[1]}
+                Тема: {question.name}<br/>
+                Вопрос: {question.text}<br/>
+                Id: {question.id}
             </div>
         );
         return (
@@ -72,6 +63,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         onEnter: () => dispatch(actionCreators.check_questions()),
+        onChangeCurrentQuestion: (num) => dispatch(actionCreators.change_current_question(num)),
     }
 };
 

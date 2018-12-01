@@ -8,19 +8,9 @@ import './index.css'
 class AnswerForm extends Component {
     constructor(props) {
         super(props);
-        if (!localStorage.getItem('currentQuestion_topic')) {
-            localStorage.setItem('currentQuestion_topic', 'Выберите вопрос в списке вопросов');
-        }
-        if (!localStorage.getItem('currentQuestion_text')) {
-            localStorage.setItem('currentQuestion_text', '');
-        }
-        if (!localStorage.getItem('answer_text')) {
-            localStorage.setItem('answer_text', '');
-        }
         this.state = {
-            question_topic: localStorage.getItem('currentQuestion_topic'),
-            question_text: localStorage.getItem('currentQuestion_text'),
-            text: localStorage.getItem('answer_text'),
+            question_topic: this.props.questions[this.props.currentQuestion].name,
+            question_text: this.props.questions[this.props.currentQuestion].text,
             status: '',
         };
 
@@ -43,12 +33,10 @@ class AnswerForm extends Component {
     }
 
     handleSubmit (event) {
-        localStorage.setItem('text', this.state.text);
         this.setState({ status: 'Загрузка...' });
         const data = new FormData();
         data.append('topic', this.state.topic);
         data.append('text', this.state.text);
-        data.append('geo', this.state.geo);
         data.append('file', this.state.file);
         const myHeaders = new Headers({
             'Access-Control-Allow-Origin': '/',
@@ -77,6 +65,7 @@ class AnswerForm extends Component {
         if (!this.props.isLogin) {
             return <Redirect push to="/" />;
         }
+        console.log(this.props);
 
         return (
             <form
@@ -86,8 +75,7 @@ class AnswerForm extends Component {
                 <h2 align="center">Ответить на вопрос</h2>
                 <div className="result">
                     Вопрос: { this.state.question_topic } <br/>
-                    Текст: { this.state.question_text } <br/>
-                    Ответ: { this.state.text } <br/>
+                    Текст вопроса: { this.state.question_text } <br/>
                 </div>
 
                 <FormInput
@@ -117,6 +105,8 @@ class AnswerForm extends Component {
 const mapStateToProps = state => {
     return {
         isLogin: state.auth.token !== null,
+        questions: state.quest.questions,
+        currentQuestion: state.quest.currentQuestion,
     }
 };
 

@@ -20,3 +20,10 @@ export const get_questions = (data) => {
         data
     };
 };
+
+export const change_current_question = (number) => {
+    return {
+        type: actionTypes.CHANGE_CURRENT_QUESTION,
+        number
+    };
+};
