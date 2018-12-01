@@ -11,19 +11,21 @@ class AnswerList extends Component {
             return <Redirect push to="/" />;
         }
 
-        let i = 1;
-        const question = this.props.questions[this.props.currentQuestion];
-        console.log(this.props);
-        const output = question.answers.map((answer) =>
-            <div
-                className='answer'
-                key={i++}
-            >
-                Ответ: {answer}
-            </div>
-        );
+        let output;
+        if (this.props.question) {
+            let i = 1;
+            output = this.props.question.map((answer) =>
+                <div
+                    className='answer'
+                    key={i++}
+                >
+                    Ответ: {answer}
+                </div>
+            );
+        }
+
         let title;
-        if (output.length !== 0) {
+        if (output && output.length !== 0) {
             title = <h2 align="center">Список вопросов</h2>;
         }
         return (
@@ -38,8 +40,8 @@ class AnswerList extends Component {
 
 const mapStateToProps = state => {
     return {
-        currentQuestion: state.quest.currentQuestion,
-        questions: state.quest.questions,
+        question: state.quest.questions[state.quest.currentQuestion] !== undefined ?
+            state.quest.questions[state.quest.currentQuestion].answers : state.quest.questions[state.quest.currentQuestion],
         isLogin: state.auth.token !== null,
     }
 };

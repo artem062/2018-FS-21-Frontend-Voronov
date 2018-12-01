@@ -1,9 +1,18 @@
 import * as actionTypes from './actionTypes';
 
-export const add_question = (topic, text) => {
+export const add_question = (id, topic, text) => {
     return {
         type: actionTypes.ADD_QUESTION,
+        id,
         topic,
+        text
+    };
+};
+
+export const add_answer = (question_id, text) => {
+    return {
+        type: actionTypes.ADD_ANSWER,
+        question_id,
         text
     };
 };

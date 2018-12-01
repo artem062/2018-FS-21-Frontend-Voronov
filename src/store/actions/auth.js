@@ -31,8 +31,7 @@ export const auth = (login, password) => {
                 console.log(response);
                 localStorage.setItem('token', response.data.token);
                 dispatch(authSuccess(response.data.token));
-                axios.get('http://localhost:8000/question/get/').then( resp => {
-                    console.log(resp);
+                axios.get('https://voronov.chickenkiller.com/question/get/').then( resp => {
                     dispatch(actionCreators.get_questions(resp))
                 })
             })

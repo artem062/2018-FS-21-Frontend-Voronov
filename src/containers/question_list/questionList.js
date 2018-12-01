@@ -39,9 +39,8 @@ class QuestionList extends Component {
                 key={i++}
                 onClick={() => this.changeCurrentQuestion(index)}
             >
-                Тема: {question.name}<br/>
+                Тема: {question.topic}<br/>
                 Вопрос: {question.text}<br/>
-                Id: {question.id}
             </div>
         );
         return (

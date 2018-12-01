@@ -12,14 +12,16 @@ import AnswerList from './containers/answer_list/answerList'
 class App extends Component {
     render() {
         return (
-            <Router>
-                <Layout>
-                    <Route exact path='/' component={ MainPage } />
-                    <Route exact path='/question' component={ QuestionList } />
-                    <Route path='/question/add' component={ QuestionForm } />
-                    <Route path='/answer/add' component={ AnswerList } />
-                </Layout>
-            </Router>
+            <div>
+                <Router>
+                    <Layout>
+                        <Route exact path='/' component={ MainPage } />
+                        <Route exact path='/question' component={ QuestionList } />
+                        <Route path='/question/add' component={ QuestionForm } />
+                        <Route path='/answer/add' component={ AnswerList } />
+                    </Layout>
+                </Router>
+            </div>
         );
     }
 }

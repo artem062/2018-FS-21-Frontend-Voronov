@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from "react-redux";
+import Centrifuge from "../../containers/Centrifuge/Centrifuge";
 
 class Header extends Component {
     render() {
@@ -10,23 +11,27 @@ class Header extends Component {
             if(this.props.questions !== 0) {
                 unread = ` (${this.props.questions})`
             }
-            hiddenLinks = <ul>
-                <li>
-                    <Link to='/question'>Список вопросов{ unread }</Link>
-                </li>
-                <li>
-                    <Link to='/question/add'>Задать вопрос</Link>
-                </li>
-                <li>
-                    <Link to='/answer/add'>Ответить</Link>
-                </li>
-            </ul>
+            hiddenLinks = <div>
+                <ul>
+                    <li>
+                        <Link to='/question'>Список вопросов{ unread }</Link>
+                    </li>
+                    <li>
+                        <Link to='/question/add'>Задать вопрос</Link>
+                    </li>
+                    {/*<li>*/}
+                        {/*<Link to='/answer/add'>Ответить</Link>*/}
+                    {/*</li>*/}
+                </ul>
+                <Centrifuge/>
+            </div>
         } else {
-            hiddenLinks = <ul>
-                <li>
-                    <Link to='/'>Вход</Link>
-                </li>
-            </ul>
+            hiddenLinks =
+                <ul>
+                    <li>
+                        <Link to='/'>Вход</Link>
+                    </li>
+                </ul>
         }
 
         return hiddenLinks;

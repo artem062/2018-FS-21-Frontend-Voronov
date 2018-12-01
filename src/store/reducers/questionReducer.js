@@ -13,8 +13,26 @@ const reducer = ( state = initialState, action ) => {
             new_questions: state.new_questions + 1,
             questions: [
                 ...state.questions,
-                [action.topic, action.text]
+                {
+                    id: action.id,
+                    topic: action.topic,
+                    text: action.text,
+                    answers: [],
+                }
             ]
+        }
+    }
+
+    if (action.type === actionTypes.ADD_ANSWER) {
+        const questions = state.questions;
+        const index = questions.findIndex(x => x.id === action.question_id);
+        questions[index].answers = [
+            ...questions[index].answers,
+            action.text
+        ];
+        return {
+            ...state,
+            questions
         }
     }
 
@@ -36,12 +54,12 @@ const reducer = ( state = initialState, action ) => {
         const readyData = JSON.parse(action.data.data.questions);
         const questions = readyData.map((obj) => ({
             id: obj.pk,
-            name: obj.fields.name,
+            topic: obj.fields.name,
             text: obj.fields.text,
             answers: [],
         }));
         questions.forEach((ques) => {
-            axios.get(`http://localhost:8000/question/get_answers/${ques.id}/`).then( resp => {
+            axios.get(`https://voronov.chickenkiller.com/question/get_answers/${ques.id}/`).then( resp => {
                 const answersArray = JSON.parse(resp.data.answers);
                 ques.answers = answersArray.map((obj) => (obj.fields.name));
             })
