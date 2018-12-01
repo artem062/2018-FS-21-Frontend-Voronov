@@ -6,10 +6,9 @@
     padding: 20px;
 }
 
-.footer {
-    width: 100%;
+.status {
     font-size: 120%;
     border-radius: 5px;
     background-color: #cfffb6;
-    padding: 20px;
+    padding: 10px;
 }

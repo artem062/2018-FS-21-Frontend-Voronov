@@ -5,7 +5,6 @@ import FormInput from '../components/formInput';
 // import FileInput from '../components/fileInput';
 import './index.css'
 import axios from "axios";
-import * as actionCreators from "../../../store/actions/questionCollector";
 
 class AnswerForm extends Component {
     constructor(props) {
@@ -62,7 +61,6 @@ class AnswerForm extends Component {
             text: this.state.text
         })
             .then(response => {
-                this.props.onAdd(this.state.question_id, this.state.text);
                 this.setState({
                     status: response.data.status,
                 });
@@ -105,7 +103,7 @@ class AnswerForm extends Component {
                     {/*<tr>*/}
                         {/*<td><FileInput saveFun={ this.updateFile } /></td>*/}
                         {/*<td>*/}
-                            <div className="status" align="right">{ this.state.status }</div>
+                            {/*<div className="status" align="right">{ this.state.status }</div>*/}
                         {/*</td>*/}
                     {/*</tr>*/}
                     {/*</tbody>*/}
@@ -127,10 +125,4 @@ const mapStateToProps = state => {
     }
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        onAdd: (question_id, text) => dispatch(actionCreators.add_answer(question_id, text)),
-    }
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(AnswerForm);
+export default connect(mapStateToProps)(AnswerForm);

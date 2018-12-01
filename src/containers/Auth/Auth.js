@@ -105,7 +105,7 @@ class Auth extends Component {
 
     render() {
         if(this.props.isLogin) {
-            return <Redirect to='/question/add'/>
+            return <Redirect to='/question'/>
         }
 
         const inputs = Object

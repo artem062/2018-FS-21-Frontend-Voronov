@@ -5,7 +5,6 @@ import FormInput from '../components/formInput';
 // import FileInput from '../components/fileInput';
 // import ShareGeo from '../components/shareGeo';
 import './index.css'
-import * as actionCreators from '../../../store/actions/questionCollector';
 import axios from "axios";
 
 class QuestionForm extends Component {
@@ -69,7 +68,6 @@ class QuestionForm extends Component {
             text: this.state.text
         })
             .then(response => {
-                this.props.onAdd(response.data.id, this.state.topic, this.state.text);
                 this.setState({
                     status: response.data.status,
                 });
@@ -86,6 +84,11 @@ class QuestionForm extends Component {
     render() {
         if (!this.props.isLogin) {
             return <Redirect push to="/" />;
+        }
+
+        let status;
+        if (this.state.status) {
+            status = <div className="status" align="center">{ this.state.status }</div>
         }
 
         return (
@@ -128,7 +131,7 @@ class QuestionForm extends Component {
                     {/*<tr>*/}
                         {/*<td><FileInput saveFun={ this.updateFile } /></td>*/}
                         {/*<td>*/}
-                            <div className="status" align="right">{ this.state.status }</div>
+                            {status}
                         {/*</td>*/}
                     {/*</tr>*/}
                     {/*</tbody>*/}
@@ -148,10 +151,4 @@ const mapStateToProps = state => {
     }
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        onAdd: (id, topic, text) => dispatch(actionCreators.add_question(id, topic, text)),
-    }
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(QuestionForm);
+export default connect(mapStateToProps)(QuestionForm);
