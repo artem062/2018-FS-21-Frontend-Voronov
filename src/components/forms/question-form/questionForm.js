@@ -2,41 +2,27 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {Redirect} from "react-router";
 import FormInput from '../components/formInput';
-import FileInput from '../components/fileInput';
-import ShareGeo from '../components/shareGeo';
+// import FileInput from '../components/fileInput';
+// import ShareGeo from '../components/shareGeo';
 import './index.css'
-import * as actionCreators from '../../../store/actions/questionCollector';
+import axios from "axios";
 
 class QuestionForm extends Component {
     constructor(props) {
         super(props);
-        let i = 1;
-        while (localStorage.getItem(`question_topic${i}`)) {
-            ++i;
-        }
-        if (!localStorage.getItem(`question_topic${i}`)) {
-            localStorage.setItem(`question_topic${i}`, '');
-        }
-        if (!localStorage.getItem(`question_text${i}`)) {
-            localStorage.setItem(`question_text${i}`, '');
-        }
-        if (!localStorage.getItem(`geo${i}`)) {
-            localStorage.setItem(`geo${i}`, '');
-        }
         this.state = {
-            topic: localStorage.getItem(`question_topic${i}`),
-            text: localStorage.getItem(`question_text${i}`),
-            geo: localStorage.getItem(`geo${i}`),
-            i:i,
+            topic: '',
+            text: '',
+            // geo: '',
             status: '',
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
         this.updateTopic = this.updateTopic.bind(this);
         this.updateText = this.updateText.bind(this);
-        this.updateGeo = this.updateGeo.bind(this);
+        // this.updateGeo = this.updateGeo.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.updateFile = this.updateFile.bind(this);
+        // this.updateFile = this.updateFile.bind(this);
     }
 
     updateTopic (value) {
@@ -51,17 +37,17 @@ class QuestionForm extends Component {
         })
     }
 
-    updateGeo (value) {
-        this.setState({
-            geo: value
-        })
-    }
-
-    updateFile (value) {
-        this.setState({
-            file: value
-        })
-    }
+    // updateGeo (value) {
+    //     this.setState({
+    //         geo: value
+    //     })
+    // }
+    //
+    // updateFile (value) {
+    //     this.setState({
+    //         file: value
+    //     })
+    // }
 
     handleSubmit (event) {
         if (this.state.topic.length === 0 && this.state.text.length === 0) {
@@ -72,37 +58,20 @@ class QuestionForm extends Component {
             return
         }
 
-        const i = this.state.i;
-        localStorage.setItem(`question_topic${i}`, this.state.topic);
-        localStorage.setItem(`question_text${i}`, this.state.text);
-        localStorage.setItem(`geo${i}`, this.state.geo);
-
-        this.props.onAdd(this.state.topic, this.state.text);
-
         this.setState({
             status: 'Загрузка...',
-            i: i + 1
         });
 
-        const data = new FormData();
-        data.append('topic', this.state.topic);
-        data.append('text', this.state.text);
-        data.append('geo', this.state.geo);
-        data.append('file', this.state.file);
-        const myHeaders = new Headers({
-            'Access-Control-Allow-Origin': '/',
-        });
-        fetch('http://localhost:8000/question/add', {
-            method: 'POST',
-            body: data,
-            headers: myHeaders,
-        }).then((response) => {
-            if (response.ok) {
-                this.setState({ status: 'Успешно загружено!'});
-            } else {
-                this.setState({ status: 'Ошибка при загрузке'});
-            }
-        });
+        axios.post('https://voronov.chickenkiller.com/question/add_js/', {
+            token: this.props.token,
+            topic: this.state.topic,
+            text: this.state.text
+        })
+            .then(response => {
+                this.setState({
+                    status: response.data.status,
+                });
+            });
         event.preventDefault();
     }
 
@@ -117,6 +86,11 @@ class QuestionForm extends Component {
             return <Redirect push to="/" />;
         }
 
+        let status;
+        if (this.state.status) {
+            status = <div className="status" align="center">{ this.state.status }</div>
+        }
+
         return (
             <form
                 onSubmit={ this.handleSubmit }
@@ -126,7 +100,7 @@ class QuestionForm extends Component {
                 <div className="result">
                     Тема: { this.state.topic } <br/>
                     Текст: { this.state.text } <br/>
-                    Геопозиция: { this.state.geo }
+                    {/*Геопозиция: { this.state.geo }*/}
                 </div>
 
                 <FormInput
@@ -145,22 +119,24 @@ class QuestionForm extends Component {
                     saveFun={ this.updateText }
                 />
 
-                <ShareGeo
-                    label="Геопозиция"
-                    placeholder="Введите геопозицию"
-                    value={ this.state.geo }
-                    saveFun={ this.updateGeo }
-                />
+                {/*<ShareGeo*/}
+                    {/*label="Геопозиция"*/}
+                    {/*placeholder="Введите геопозицию"*/}
+                    {/*value={ this.state.geo }*/}
+                    {/*saveFun={ this.updateGeo }*/}
+                {/*/>*/}
 
-                <table className="footer">
-                    <tbody>
-                    <tr>
-                        <td><FileInput saveFun={ this.updateFile } /></td>
-                        <td><div className="status" align="right">{ this.state.status }</div></td>
-                    </tr>
-                    </tbody>
+                {/*<table className="footer">*/}
+                    {/*<tbody>*/}
+                    {/*<tr>*/}
+                        {/*<td><FileInput saveFun={ this.updateFile } /></td>*/}
+                        {/*<td>*/}
+                            {status}
+                        {/*</td>*/}
+                    {/*</tr>*/}
+                    {/*</tbody>*/}
 
-                </table>
+                {/*</table>*/}
 
                 <input type="submit" value="Отправить"/>
             </form>
@@ -171,13 +147,8 @@ class QuestionForm extends Component {
 const mapStateToProps = state => {
     return {
         isLogin: state.auth.token !== null,
+        token: state.auth.token
     }
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        onAdd: (topic, text) => dispatch(actionCreators.add_question(topic, text)),
-    }
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(QuestionForm);
+export default connect(mapStateToProps)(QuestionForm);
