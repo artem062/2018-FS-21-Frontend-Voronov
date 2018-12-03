@@ -8,7 +8,6 @@ class FormInput extends Component {
       label: props.label,
       placeholder: props.placeholder,
       name: props.name,
-      value: props.value,
       saveFun: props.saveFun
     };
 
@@ -35,7 +34,7 @@ class FormInput extends Component {
           { this.state.label }
           <input
               className='myInput'
-              value={ this.state.value }
+              value={ this.props.value }
               onChange={ this.handleChange }
               placeholder={ this.state.placeholder }
           />

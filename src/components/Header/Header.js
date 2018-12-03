@@ -14,14 +14,14 @@ class Header extends Component {
             hiddenLinks = <div>
                 <ul>
                     <li>
+                        <Link to='/profile'>Профиль</Link>
+                    </li>
+                    <li>
                         <Link to='/question'>Список вопросов{ unread }</Link>
                     </li>
                     <li>
                         <Link to='/question/add'>Задать вопрос</Link>
                     </li>
-                    {/*<li>*/}
-                        {/*<Link to='/answer/add'>Ответить</Link>*/}
-                    {/*</li>*/}
                 </ul>
                 <Centrifuge/>
             </div>

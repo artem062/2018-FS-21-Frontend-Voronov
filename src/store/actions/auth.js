@@ -8,10 +8,11 @@ export const authStart = () => {
     }
 };
 
-export const authSuccess = (token) => {
+export const authSuccess = (token, email) => {
     return {
         type: actionTypes.AUTH_SUCCESS,
-        token
+        token,
+        email
     }
 };
 
@@ -28,15 +29,29 @@ export const auth = (login, password) => {
         dispatch(authStart());
         axios.post('https://voronov.chickenkiller.com/js_login/', { login, password }) //postman
             .then(response => {
-                console.log(response);
                 localStorage.setItem('token', response.data.token);
-                dispatch(authSuccess(response.data.token));
-                axios.get('https://voronov.chickenkiller.com/question/get/').then( resp => {
-                    dispatch(actionCreators.get_questions(resp))
-                })
+                dispatch(getQuestions(response.data.token));
             })
             .catch(error => {
                 dispatch(authFailed(error));
             });
+    }
+};
+
+export const getQuestions = (token) => {
+    return dispatch => {
+        dispatch(authSuccess(token));
+        axios.get('https://voronov.chickenkiller.com/question/get/').then( resp => {
+            dispatch(actionCreators.get_questions(resp))
+        })
+    }
+};
+
+export const updateProfile = (login, email, avatar) => {
+    return {
+        type: actionTypes.UPDATE_PROFILE,
+        login,
+        email,
+        avatar
     }
 };

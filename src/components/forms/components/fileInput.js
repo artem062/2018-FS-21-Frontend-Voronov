@@ -47,7 +47,7 @@ class FileInput extends Component {
                 <input
                     type="file"
                     onChange={ (event) => this.handleChange(event.target.files) }
-                    onLoad={ () => URL.revokeObjectURL(this.state.imageIrl) }
+                    onLoad={ () => URL.revokeObjectURL(this.state.imageUrl) }
                 />
             </div>
         )

@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {Redirect} from "react-router";
 import FormInput from '../components/formInput';
-// import FileInput from '../components/fileInput';
-// import ShareGeo from '../components/shareGeo';
 import './index.css'
 import axios from "axios";
 
@@ -13,16 +11,13 @@ class QuestionForm extends Component {
         this.state = {
             topic: '',
             text: '',
-            // geo: '',
             status: '',
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
         this.updateTopic = this.updateTopic.bind(this);
         this.updateText = this.updateText.bind(this);
-        // this.updateGeo = this.updateGeo.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        // this.updateFile = this.updateFile.bind(this);
     }
 
     updateTopic (value) {
@@ -36,18 +31,6 @@ class QuestionForm extends Component {
             text: value
         })
     }
-
-    // updateGeo (value) {
-    //     this.setState({
-    //         geo: value
-    //     })
-    // }
-    //
-    // updateFile (value) {
-    //     this.setState({
-    //         file: value
-    //     })
-    // }
 
     handleSubmit (event) {
         if (this.state.topic.length === 0 && this.state.text.length === 0) {
@@ -72,6 +55,10 @@ class QuestionForm extends Component {
                     status: response.data.status,
                 });
             });
+        this.setState({
+            topic: '',
+            text: '',
+        });
         event.preventDefault();
     }
 
@@ -88,6 +75,11 @@ class QuestionForm extends Component {
 
         let status;
         if (this.state.status) {
+            setTimeout(() => {
+                this.setState({
+                        status: ''
+                    }
+                )}, 1000);
             status = <div className="status" align="center">{ this.state.status }</div>
         }
 
@@ -100,7 +92,6 @@ class QuestionForm extends Component {
                 <div className="result">
                     Тема: { this.state.topic } <br/>
                     Текст: { this.state.text } <br/>
-                    {/*Геопозиция: { this.state.geo }*/}
                 </div>
 
                 <FormInput
@@ -119,24 +110,7 @@ class QuestionForm extends Component {
                     saveFun={ this.updateText }
                 />
 
-                {/*<ShareGeo*/}
-                    {/*label="Геопозиция"*/}
-                    {/*placeholder="Введите геопозицию"*/}
-                    {/*value={ this.state.geo }*/}
-                    {/*saveFun={ this.updateGeo }*/}
-                {/*/>*/}
-
-                {/*<table className="footer">*/}
-                    {/*<tbody>*/}
-                    {/*<tr>*/}
-                        {/*<td><FileInput saveFun={ this.updateFile } /></td>*/}
-                        {/*<td>*/}
-                            {status}
-                        {/*</td>*/}
-                    {/*</tr>*/}
-                    {/*</tbody>*/}
-
-                {/*</table>*/}
+                {status}
 
                 <input type="submit" value="Отправить"/>
             </form>

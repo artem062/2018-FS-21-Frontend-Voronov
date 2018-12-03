@@ -6,6 +6,13 @@ import { Redirect } from 'react-router-dom';
 import './Auth.css'
 
 class Auth extends Component {
+    constructor(props) {
+        super(props);
+        if(localStorage.getItem('token')) {
+            this.props.onTryAuth(localStorage.getItem('token'));
+        }
+    }
+
     state = {
         loginForm: {
             login: {
@@ -163,7 +170,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => {
     return  {
-        onAuth: (login, password) => dispatch(actions.auth(login, password))
+        onAuth: (login, password) => dispatch(actions.auth(login, password)),
+        onTryAuth: (token) => dispatch(actions.getQuestions(token))
     }
 };
 
