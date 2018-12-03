@@ -10,3 +10,4 @@ export const ADD_ANSWER = 'ADD_ANSWER';
 export const AUTH_START = 'AUTH_START';
 export const AUTH_SUCCESS = 'AUTH_SUCCESS';
 export const AUTH_FAILED = 'AUTH_FAILED';
+export const UPDATE_PROFILE = 'UPDATE_PROFILE';

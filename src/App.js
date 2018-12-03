@@ -8,6 +8,7 @@ import QuestionList from "./containers/question_list/questionList";
 import MainPage from './containers/mainPage/MainPage'
 import QuestionForm from './components/forms/question-form/questionForm';
 import AnswerList from './containers/answer_list/answerList'
+import Profile from "./components/forms/Profile/Profile";
 
 class App extends Component {
     render() {
@@ -16,6 +17,7 @@ class App extends Component {
                 <Router>
                     <Layout>
                         <Route exact path='/' component={ MainPage } />
+                        <Route exact path='/profile' component={ Profile } />
                         <Route exact path='/question' component={ QuestionList } />
                         <Route path='/question/add' component={ QuestionForm } />
                         <Route path='/answer/add' component={ AnswerList } />

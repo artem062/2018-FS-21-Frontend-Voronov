@@ -6,6 +6,16 @@ import * as actionCreators from "../../store/actions/questionCollector";
 import AnswerForm from "../../components/forms/answer-form/answerForm";
 
 class AnswerList extends Component {
+    constructor(props) {
+        super(props);
+        if (this.props.questions[this.props.currentQuestion]) {
+            this.state = {
+                question_topic: this.props.questions[this.props.currentQuestion].topic,
+                question_text: this.props.questions[this.props.currentQuestion].text,
+            };
+        }
+    }
+
     render() {
         if (!this.props.isLogin) {
             return <Redirect push to="/" />;
@@ -26,10 +36,15 @@ class AnswerList extends Component {
 
         let title;
         if (output && output.length !== 0) {
-            title = <h2 align="center">Список вопросов</h2>;
+            title = <h3 align="center">Список ответов</h3>;
         }
         return (
             <div>
+                <div className="result">
+                    Вопрос: { this.state.question_topic } <br/>
+                    Текст вопроса: { this.state.question_text } <br/>
+                </div>
+
                 {title}
                 {output}
                 <AnswerForm/>
@@ -43,6 +58,8 @@ const mapStateToProps = state => {
         question: state.quest.questions[state.quest.currentQuestion] !== undefined ?
             state.quest.questions[state.quest.currentQuestion].answers : state.quest.questions[state.quest.currentQuestion],
         isLogin: state.auth.token !== null,
+        questions: state.quest.questions,
+        currentQuestion: state.quest.currentQuestion,
     }
 };
 
